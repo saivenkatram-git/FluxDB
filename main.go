@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 
@@ -11,13 +12,17 @@ func main() {
 
 	fluxdb := fluxdb.New()
 
-	listener, err := net.Listen("tcp", ":6379")
+	port := fluxdb.GetConfig("port")
+	bind := fluxdb.GetConfig("bind")
+	addr := fmt.Sprintf("%s:%s", bind, port)
+
+	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer listener.Close()
 
-	log.Println("FluxDB listening on port 6379")
+	log.Printf("FluxDB started on %s", port)
 
 	for {
 		conn, err := listener.Accept()

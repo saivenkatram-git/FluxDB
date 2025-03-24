@@ -279,6 +279,26 @@ func (r *FluxDB) processCommand(cmd []string, conn net.Conn) {
 		}
 		writeInteger(conn, count)
 
+	case "HELP":
+		helpText := "Available commands:\r\n" +
+			"PING - Test connection\r\n" +
+			"SET key value - Set a key value pair\r\n" +
+			"GET key - Get a key value pair\r\n" +
+			"DEL key - Delete a key value pair\r\n" +
+			"CONFIG GET/SET - View or modify configuration\r\n" +
+			"SELECT db - Select a logical database\r\n" +
+			"HELP - Show this help"
+
+		writeBulkString(conn, helpText)
+
+	case "SELECT":
+		if len(args) < 1 {
+			writeError(conn, "wrong number of arguments for 'select' command")
+			return
+		}
+
+		writeString(conn, "OK")
+
 	case "CONFIG":
 		if len(args) < 1 {
 			writeError(conn, "wrong number of arguments for 'config' command")
